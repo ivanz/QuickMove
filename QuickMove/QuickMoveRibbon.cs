@@ -8,6 +8,8 @@ namespace QuickMove
 {
     public partial class QuickMoveRibbon
     {
+        private static readonly QuickMoveModel model = new QuickMoveModel();
+        
         private void QuickMoveRibbon_Load(object sender, RibbonUIEventArgs e)
         {
 
@@ -15,16 +17,12 @@ namespace QuickMove
 
         private void quickMoveButton_Click(object sender, RibbonControlEventArgs e)
         {
-            var model = new QuickMoveModel() {
-                Folders = FolderUtils.GetFolderModelList().ToList()
-            };
-
             using (var dialog = new QuickMoveForm(model))
             {
                 dialog.ShowDialog();
                 if (dialog.DialogResult == System.Windows.Forms.DialogResult.OK) {
                     if (model.CheckValid())
-                        FolderUtils.MoveCurrentSelectionToFolder(model.SelectedFolder.Id);
+                        FolderUtils.MoveCurrentSelectionToFolder(model.SelectedFolder.Id, model.SelectedFolder.StoreId);
                 }
             }
             

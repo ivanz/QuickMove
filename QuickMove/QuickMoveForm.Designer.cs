@@ -35,6 +35,7 @@
             this.moveButton = new System.Windows.Forms.Button();
             this.cancelButton = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
+            this.refreshButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // foldersList
@@ -48,14 +49,14 @@
             this.foldersList.Location = new System.Drawing.Point(28, 91);
             this.foldersList.Margin = new System.Windows.Forms.Padding(5);
             this.foldersList.Name = "foldersList";
-            this.foldersList.Size = new System.Drawing.Size(1018, 642);
+            this.foldersList.Size = new System.Drawing.Size(1043, 642);
             this.foldersList.TabIndex = 2;
             this.foldersList.SelectedValueChanged += new System.EventHandler(this.foldersList_SelectedValueChanged);
             // 
             // searchButton
             // 
             this.searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.searchButton.Location = new System.Drawing.Point(885, 22);
+            this.searchButton.Location = new System.Drawing.Point(910, 22);
             this.searchButton.Margin = new System.Windows.Forms.Padding(5);
             this.searchButton.Name = "searchButton";
             this.searchButton.Size = new System.Drawing.Size(164, 40);
@@ -71,7 +72,7 @@
             this.searchTextBox.Location = new System.Drawing.Point(108, 22);
             this.searchTextBox.Margin = new System.Windows.Forms.Padding(5);
             this.searchTextBox.Name = "searchTextBox";
-            this.searchTextBox.Size = new System.Drawing.Size(763, 35);
+            this.searchTextBox.Size = new System.Drawing.Size(788, 35);
             this.searchTextBox.TabIndex = 0;
             this.searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyDown);
             this.searchTextBox.KeyUp += new System.Windows.Forms.KeyEventHandler(this.searchTextBox_KeyUp);
@@ -90,7 +91,7 @@
             // 
             this.moveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.moveButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.moveButton.Location = new System.Drawing.Point(885, 776);
+            this.moveButton.Location = new System.Drawing.Point(910, 776);
             this.moveButton.Margin = new System.Windows.Forms.Padding(5);
             this.moveButton.Name = "moveButton";
             this.moveButton.Size = new System.Drawing.Size(164, 58);
@@ -102,7 +103,7 @@
             // cancelButton
             // 
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.cancelButton.Location = new System.Drawing.Point(687, 776);
+            this.cancelButton.Location = new System.Drawing.Point(712, 776);
             this.cancelButton.Margin = new System.Windows.Forms.Padding(5);
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(164, 58);
@@ -114,20 +115,32 @@
             // label2
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.label2.Location = new System.Drawing.Point(23, 771);
+            this.label2.Location = new System.Drawing.Point(200, 791);
             this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(621, 63);
+            this.label2.Size = new System.Drawing.Size(479, 29);
             this.label2.TabIndex = 5;
-            this.label2.Text = "You can use the Up, Down, Enter keys to quickly pick a folder without leaving the" +
-    " filter text box.";
+            this.label2.Text = "Use the Up, Down, Enter keys  whilst typing.";
+            // 
+            // refreshButton
+            // 
+            this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.refreshButton.Location = new System.Drawing.Point(28, 776);
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Size = new System.Drawing.Size(164, 58);
+            this.refreshButton.TabIndex = 6;
+            this.refreshButton.Text = "Refresh";
+            this.refreshButton.UseVisualStyleBackColor = true;
+            this.refreshButton.Click += new System.EventHandler(this.refreshButton_Click);
             // 
             // QuickMoveForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1076, 856);
+            this.ClientSize = new System.Drawing.Size(1101, 856);
+            this.Controls.Add(this.refreshButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cancelButton);
             this.Controls.Add(this.moveButton);
@@ -154,5 +167,6 @@
         private System.Windows.Forms.Button moveButton;
         private System.Windows.Forms.Button cancelButton;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button refreshButton;
     }
 }

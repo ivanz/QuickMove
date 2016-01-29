@@ -13,6 +13,7 @@ namespace QuickMove
         {
             return GetFolderList().Select(f => new FolderModel {
                 Id = f.EntryID,
+                StoreId = f.StoreID,
                 Name = f.FullFolderPath,
             }).ToList();
         }
@@ -20,7 +21,14 @@ namespace QuickMove
         private static IEnumerable<Folder> GetFolderList()
         {
             List<Folder> folders = new List<Folder>();
-            FolderVisitor(Globals.ThisAddIn.Application.ActiveExplorer().Session.Folders.Cast<Folder>().ToList(), folders);
+
+            foreach (Folder rootFolder in Globals.ThisAddIn.Application.Session.Stores
+                                               .Cast<Store>()
+                                               .Select(s => s.GetRootFolder())
+                                               .Cast<Folder>()
+                                               .ToList()) {
+                FolderVisitor(rootFolder.Folders.Cast<Folder>().ToList(), folders);
+            }
 
             return folders;
         }
@@ -39,14 +47,14 @@ namespace QuickMove
             }
         }
 
-        public static void MoveCurrentSelectionToFolder(string folderId)
+        public static void MoveCurrentSelectionToFolder(string folderId, string storeId)
         {
             Selection selection = Globals.ThisAddIn.Application.ActiveExplorer().Selection;
 
             if (selection == null || selection.Count == 0)
                 return;
 
-            Folder folder = GetFolderList().SingleOrDefault(f => f.EntryID.Equals(folderId));
+            MAPIFolder folder = Globals.ThisAddIn.Application.ActiveExplorer().Session.GetFolderFromID(folderId, storeId);
             if (folder == null)
                 return;
 

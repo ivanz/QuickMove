@@ -43,6 +43,7 @@ namespace QuickMove
             if (!string.IsNullOrWhiteSpace(text)) {
                 data = _model.Folders
                     .Where(folder => folder.Name.IndexOf(text, StringComparison.InvariantCultureIgnoreCase) >= 0)
+                    .OrderBy(folder => folder.Name)
                     .ToList();
             }
 
@@ -59,7 +60,9 @@ namespace QuickMove
 
         private void searchTextBox_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Return || e.KeyCode == Keys.Enter) {
+            if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down) {
+                return;
+            } else if (e.KeyCode == Keys.Return || e.KeyCode == Keys.Enter) {
                 Done();
             } else if (e.KeyCode == Keys.Escape) {
                 Cancel();
@@ -107,6 +110,37 @@ namespace QuickMove
             } else if (e.KeyCode == Keys.Down && foldersList.Items.Count > 0) {
                 foldersList.SelectedIndex = Math.Min(foldersList.Items.Count - 1, foldersList.SelectedIndex + 1); 
             }
+        }
+
+        private void refreshButton_Click(object sender, EventArgs e)
+        {
+            RefreshFolders();
+        }
+
+        private void RefreshFolders()
+        {
+            refreshButton.Enabled = false;
+            refreshButton.Text = "Loading";
+            Color previousColor = refreshButton.BackColor;
+            refreshButton.BackColor = Color.Red;
+            foldersList.DataSource = Enumerable.Empty<FolderModel>();
+
+            _model
+                .RefreshFolderList()
+                .ContinueWith(task => {
+                    UpdateList();
+                    refreshButton.Enabled = true;
+                    refreshButton.Text = "Refresh";
+                    refreshButton.BackColor = previousColor;
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
+
+        protected override void OnShown(EventArgs e)
+        {
+            if (!_model.IsLoaded)
+                RefreshFolders();
+
+            base.OnShown(e);
         }
     }
 }
