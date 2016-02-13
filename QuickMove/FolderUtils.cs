@@ -1,49 +1,46 @@
 ﻿using Microsoft.Office.Interop.Outlook;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace QuickMove
 {
     public static class FolderUtils
     {
-        public static IList<FolderModel> GetFolderModelList()
+        public static IEnumerable<FolderModel> GetFolderModelList()
         {
-            return GetFolderList().Select(f => new FolderModel {
-                Id = f.EntryID,
-                StoreId = f.StoreID,
-                Name = f.FullFolderPath,
-            }).ToList();
+            BlockingCollection<List<FolderModel>> foldersList = new BlockingCollection<List<FolderModel>>();
+
+            Folder rootFolder = (Folder) Globals.ThisAddIn.Application.Session.DefaultStore.GetRootFolder();
+
+
+            Parallel.ForEach(rootFolder.Folders.Cast<Folder>(), (source, state) => {
+                List<FolderModel> folders = new List<FolderModel>();
+                FolderVisitor(source.Folders.Cast<Folder>(), folders);
+                foldersList.Add(folders);
+            });
+
+            return foldersList.SelectMany(list => list).ToList();
         }
 
-        private static IEnumerable<Folder> GetFolderList()
+
+        private static void FolderVisitor(IEnumerable<Folder> currentFolders, List<FolderModel> collection)
         {
-            List<Folder> folders = new List<Folder>();
-
-            foreach (Folder rootFolder in Globals.ThisAddIn.Application.Session.Stores
-                                               .Cast<Store>()
-                                               .Select(s => s.GetRootFolder())
-                                               .Cast<Folder>()
-                                               .ToList()) {
-                FolderVisitor(rootFolder.Folders.Cast<Folder>().ToList(), folders);
-            }
-
-            return folders;
-        }
-
-        private static void FolderVisitor(IEnumerable<Folder> currentFolders, List<Folder> collection)
-        {
-            if (currentFolders == null || currentFolders.Count() == 0)
+            if (currentFolders == null || !currentFolders.Any())
                 return;
 
-            foreach (Folder currentFolder in currentFolders.ToArray().ToList()) {
+            foreach (Folder currentFolder in currentFolders) {
                 if (currentFolder.DefaultItemType != OlItemType.olMailItem)
                     continue;
 
-                collection.Add(currentFolder);
-                FolderVisitor(currentFolder.Folders.Cast<Folder>().ToList(), collection);
+                collection.Add(new FolderModel() {
+                    Id = currentFolder.EntryID,
+                    StoreId = currentFolder.StoreID,
+                    Name = currentFolder.Name
+                });
+
+                FolderVisitor(currentFolder.Folders.Cast<Folder>(), collection);
             }
         }
 
