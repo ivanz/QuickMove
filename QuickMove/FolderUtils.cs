@@ -15,9 +15,9 @@ namespace QuickMove
             Folder rootFolder = (Folder) Globals.ThisAddIn.Application.Session.DefaultStore.GetRootFolder();
 
 
-            Parallel.ForEach(rootFolder.Folders.Cast<Folder>(), (source, state) => {
+            Parallel.ForEach(rootFolder.Folders.Cast<Folder>(), (folder, state) => {
                 List<FolderModel> folders = new List<FolderModel>();
-                FolderVisitor(source.Folders.Cast<Folder>(), folders);
+                FolderEnumerator(folder, folders);
                 foldersList.Add(folders);
             });
 
@@ -25,23 +25,22 @@ namespace QuickMove
         }
 
 
-        private static void FolderVisitor(IEnumerable<Folder> currentFolders, List<FolderModel> collection)
+        private static void FolderEnumerator(Folder currentFolder, List<FolderModel> collection)
         {
-            if (currentFolders == null || !currentFolders.Any())
-                return;
+            collection.Add(CreateModel(currentFolder));
 
-            foreach (Folder currentFolder in currentFolders) {
-                if (currentFolder.DefaultItemType != OlItemType.olMailItem)
-                    continue;
-
-                collection.Add(new FolderModel() {
-                    Id = currentFolder.EntryID,
-                    StoreId = currentFolder.StoreID,
-                    Name = currentFolder.Name
-                });
-
-                FolderVisitor(currentFolder.Folders.Cast<Folder>(), collection);
+            foreach (Folder childFolder in currentFolder.Folders) {
+                FolderEnumerator(childFolder, collection);
             }
+        }
+
+        private static FolderModel CreateModel(Folder childFolder)
+        {
+            return new FolderModel() {
+                Id = childFolder.EntryID,
+                StoreId = childFolder.StoreID,
+                Name = childFolder.Name
+            };
         }
 
         public static void MoveCurrentSelectionToFolder(string folderId, string storeId)
